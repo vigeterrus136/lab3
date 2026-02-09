@@ -26,11 +26,21 @@ public class Character {
         this(name, type, state, new Personality());
     }
 
-    public String getName() { return name; }
-    public CharacterType getType() { return type; }
-    public EmotionState getState() { return state; }
-    public void setState(EmotionState s) { state = Objects.requireNonNull(s); }
-    public Personality getPersonality() { return personality; }
+    public String getName() {
+        return name;
+    }
+    public CharacterType getType() {
+        return type;
+    }
+    public EmotionState getState() {
+        return state;
+    }
+    public void setState(EmotionState s) {
+        state = Objects.requireNonNull(s);
+    }
+    public Personality getPersonality() {
+        return personality;
+    }
 
     public void read(Newspaper paper) {
         paper.use(this);
