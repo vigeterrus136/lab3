@@ -26,27 +26,26 @@ public class Character {
         this(name, type, state, new Personality());
     }
 
-    public String getName() {
-        return name;
+    public String getName() { return name; }
+    public CharacterType getType() { return type; }
+    public EmotionState getState() { return state; }
+    public void setState(EmotionState s) { state = Objects.requireNonNull(s); }
+    public Personality getPersonality() { return personality; }
+
+    public boolean isEngaged() {
+        return state == EmotionState.INTERESTED || state == EmotionState.EXCITED;
     }
-    public CharacterType getType() {
-        return type;
-    }
-    public EmotionState getState() {
-        return state;
-    }
-    public void setState(EmotionState s) {
-        state = Objects.requireNonNull(s);
-    }
-    public Personality getPersonality() {
-        return personality;
+
+    public void getUpsetBecauseLeaving() {
+        setState(EmotionState.SAD);
+        System.out.println(name + " расстраивается: пришлось прервать занятие и выходить.");
     }
 
     public void read(Newspaper paper) {
         paper.use(this);
         if (personality.getCuriosity() >= 70) {
             setState(EmotionState.INTERESTED);
-            System.out.println(this + " увлекается прочитанным.");
+            System.out.println(name + " увлекается прочитанным.");
         }
     }
 
@@ -54,13 +53,13 @@ public class Character {
         tv.use(this);
         if (personality.getCuriosity() < 35) {
             setState(EmotionState.BORED);
-            System.out.println(this + " быстро устает от передачи.");
+            System.out.println(name + " быстро устает от передачи.");
         }
     }
 
     public void talkAbout(String topic) {
         setState(EmotionState.INTERESTED);
-        System.out.println(this + " обсуждает: " + topic + ".");
+        System.out.println(name + " обсуждает: " + topic + ".");
     }
 
     public boolean decide(Random rnd) {

@@ -18,12 +18,14 @@ public class Main {
     public static void main(String[] args) {
         Random rnd = new Random(System.nanoTime());
 
-        Location inBus = new Location("Салон автобуса", LocationType.BUS);
+        Location start = new Location("Салон автобуса", LocationType.BUS);
+        Location station = new Location("Станция", LocationType.STATION);
+        Location park = new Location("Парк", LocationType.PARK);
         Location zoo = new Location("Зоопарк", LocationType.ZOO);
-        Bus bus = new Bus("Автобус", List.of(inBus, zoo));
+
+        Bus bus = new Bus("Автобус", List.of(start, station, park, zoo));
 
         Newspaper paper = new Newspaper("Газета");
-
         paper.addArticle("Исчезновение Листика", "Листик исчез, и это обсуждают везде.");
 
         Television tv = new Television("Телевизор");
@@ -35,8 +37,6 @@ public class Main {
         AirRifle rifle = new AirRifle("Пневматическое ружьё", 2, WeaponState.READY);
 
         Character neznayka = new Character("Незнайка", CharacterType.NEZNAIKA, EmotionState.CALM, new Personality(85));
-        Character companion1 = new Character("Спутник-1", CharacterType.COMPANION, EmotionState.CALM, new Personality(45));
-        Character companion2 = new Character("Спутник-2", CharacterType.COMPANION, EmotionState.CALM, new Personality(55));
 
         Character reader1 = new Character("Пассажир-читатель-1", CharacterType.PASSENGER, EmotionState.CALM, new Personality(30));
         Character reader2 = new Character("Пассажир-читатель-2", CharacterType.PASSENGER, EmotionState.CALM, new Personality(70));
@@ -46,7 +46,6 @@ public class Main {
 
         Character chessGirl1 = new Character("Малышка-шахматы-1", CharacterType.KID, EmotionState.CALM, new Personality(55));
         Character chessGirl2 = new Character("Малышка-шахматы-2", CharacterType.KID, EmotionState.CALM, new Personality(50));
-
         Character chessBoy1 = new Character("Малыш-шахматы-1", CharacterType.KID, EmotionState.CALM, new Personality(75));
         Character chessBoy2 = new Character("Малыш-шахматы-2", CharacterType.KID, EmotionState.CALM, new Personality(35));
 
@@ -60,55 +59,57 @@ public class Main {
         Character talker1 = new Character("Обсуждающий-1", CharacterType.KID, EmotionState.CALM, new Personality(75));
         Character talker2 = new Character("Обсуждающий-2", CharacterType.KID, EmotionState.CALM, new Personality(55));
 
-        Story story = new Story(
-                "Про Бубенчика",
-                "Бубенчик заблудился ночью и не мог найти дорогу домой.",
-                "Бубенчик"
-        );
+        Story story = new Story("Про Бубенчика", "Бубенчик заблудился ночью и не мог найти дорогу домой.", "Бубенчик");
         StoryTeller storyteller = new StoryTeller("Рассказчик", EmotionState.CALM, story);
 
         ArrayList<Character> passengers = new ArrayList<>();
         passengers.addAll(List.of(
-                neznayka, companion1, companion2,
+                neznayka,
                 reader1, reader2,
                 lottoGirl1, lottoGirl2,
-                chessGirl1, chessGirl2,
-                chessBoy1, chessBoy2,
+                chessGirl1, chessGirl2, chessBoy1, chessBoy2,
                 tvGirl1, tvGirl2, tvGirl3,
                 shooter1, shooter2,
                 talker1, talker2,
                 storyteller
         ));
 
-        passengers.remove(companion2);
-
         System.out.println("Незнайка и его спутники вошли в автобус.");
         bus.board(passengers);
+
+        // рассадка по зонам
+        bus.placeToZone(reader1, ActivityType.NEWSPAPER);
+        bus.placeToZone(reader2, ActivityType.NEWSPAPER);
+
+        bus.placeToZone(lottoGirl1, ActivityType.LOTTO);
+        bus.placeToZone(lottoGirl2, ActivityType.LOTTO);
+
+        bus.placeToZone(chessGirl1, ActivityType.CHESS);
+        bus.placeToZone(chessGirl2, ActivityType.CHESS);
+        bus.placeToZone(chessBoy1, ActivityType.CHESS);
+        bus.placeToZone(chessBoy2, ActivityType.CHESS);
+
+        bus.placeToZone(tvGirl1, ActivityType.TV);
+        bus.placeToZone(tvGirl2, ActivityType.TV);
+        bus.placeToZone(tvGirl3, ActivityType.TV);
+
+        bus.placeToZone(shooter1, ActivityType.RIFLE);
+        bus.placeToZone(shooter2, ActivityType.RIFLE);
 
         System.out.println("\nВнутри автобуса пассажиры заняты делами:\n");
 
         reader1.read(paper);
-        if (reader1.decide(rnd)) System.out.println(reader1 + " перелистывает страницы.");
-
         reader2.read(paper);
-        if (reader2.decide(rnd)) System.out.println(reader2 + " задерживается на громком заголовке.");
 
         try {
             lotto.play(lottoGirl1, lottoGirl2, rnd);
-            if (lottoGirl1.decide(rnd)) System.out.println(lottoGirl1 + " радуется и спорит о правилах.");
-            if (lottoGirl2.decide(rnd)) System.out.println(lottoGirl2 + " внимательно ищет нужный бочонок.");
         } catch (GameException e) {
             System.out.println(e.getMessage());
         }
 
         try {
             chess.play(chessGirl1, chessGirl2, rnd);
-            if (chessGirl1.decide(rnd)) System.out.println(chessGirl1 + " долго думает над ходом.");
-            if (chessGirl2.decide(rnd)) System.out.println(chessGirl2 + " уверенно двигает фигуру.");
-
             chess.play(chessBoy1, chessBoy2, rnd);
-            if (chessBoy1.decide(rnd)) System.out.println(chessBoy1 + " сияет от удачного хода.");
-            if (chessBoy2.decide(rnd)) System.out.println(chessBoy2 + " хмурится и переставляет фигуры.");
         } catch (GameException e) {
             System.out.println(e.getMessage());
         }
@@ -118,24 +119,24 @@ public class Main {
         tvGirl3.watch(tv);
 
         try {
-            if (shooter1.decide(rnd)) rifle.shoot(shooter1, rnd);
-            else System.out.println(shooter1 + " крутит ружьё в руках, но не стреляет.");
-
-            if (shooter2.decide(rnd)) rifle.shoot(shooter2, rnd);
-            else System.out.println(shooter2 + " пропускает очередь.");
+            rifle.shoot(shooter1, rnd);
+            rifle.shoot(shooter2, rnd);
         } catch (WeaponException e) {
             System.out.println(e.getMessage());
         }
 
         Discussion discussion = new Discussion("исчезновение Листика");
-        if (talker1.decide(rnd) || talker2.decide(rnd)) {
-            discussion.discuss(talker1, talker2, paper);
-        } else {
-            System.out.println(talker1 + " и " + talker2 + " не стали обсуждать новости.");
-        }
+        discussion.discuss(talker1, talker2, paper);
+
+        System.out.println("\nАвтобус продолжает путь по остановкам.\n");
+
+        bus.goNextStop();
+        bus.disembarkSome(rnd);
+
+        bus.goNextStop();
+        bus.disembarkSome(rnd);
 
         System.out.println("\nОдин пассажир начинает рассказывать историю...");
-
         if (neznayka.decide(rnd)) {
             neznayka.setState(EmotionState.INTERESTED);
             System.out.println("Незнайка внимательно слушает.");
@@ -146,15 +147,15 @@ public class Main {
 
         bus.goNextStop();
 
-
-        boolean interrupted = rnd.nextInt(100) < 80;
-
         try {
-            storyteller.tell(interrupted);
+            storyteller.tell(true);
         } catch (GameException e) {
             System.out.println(e.getMessage());
             System.out.println("Пришлось выйти, не дослушав рассказ до конца.");
         }
+
+        System.out.println("\nФинальная остановка. Все выходят.");
+        bus.disembarkAll();
 
         System.out.println("\nСцена завершена.");
     }

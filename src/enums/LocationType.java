@@ -1,5 +1,5 @@
 package enums;
 
 public enum LocationType {
-    BUS, ZOO
+    BUS, ZOO, PARK, STATION
 }
